@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="Pir.Views.Pwm"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Pir.Views"
+    xmlns:controls="using:Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:telerik="using:Telerik.UI.Xaml.Controls.Input"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+    <controls:SectionControl
+        Header="PWM"
+        Description="Pulse Width Modulation">
+        <controls:SectionControl.HeaderContent>
+            <ToggleSwitch
+                IsOn="{x:Bind Model.IsStarted}"/>
+        </controls:SectionControl.HeaderContent>
+        <StackPanel>
+            <controls:PropertyControl
+                Header="Pin">
+                <telerik:RadNumericBox
+                    Minimum="0"
+                    Value="{Binding PinNumber, Mode=TwoWay}"/>
+            </controls:PropertyControl>
+            <controls:PropertyControl
+                Header="Frequency">
+                <telerik:RadNumericBox
+                    Minimum="{x:Bind Model.MinFrequency, Mode=OneWay}"
+                    Maximum="{x:Bind Model.MaxFrequency, Mode=OneWay}"
+                    Value="{Binding Frequency, Mode=TwoWay}"/>
+            </controls:PropertyControl>
+            <controls:PropertyControl
+                Header="Duty Cycle">
+                <telerik:RadNumericBox
+                    Minimum="0"
+                    Maximum="1"
+                    Value="{Binding DutyCycle, Mode=TwoWay}"/>
+            </controls:PropertyControl>
+            <controls:PropertyControl
+                Header="Negated">
+                <CheckBox
+                    IsChecked="{Binding Negated, Mode=TwoWay}"/>
+            </controls:PropertyControl>
+        </StackPanel>
+    </controls:SectionControl>
+</UserControl>

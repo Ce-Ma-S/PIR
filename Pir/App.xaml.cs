@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Pir
@@ -66,7 +56,7 @@ namespace Pir
                     // Pokud není navigační zásobník obnovený, přejít na první stránku
                     // a nakonfigurovat novou stránku předáním požadovaných informací ve formě
                     // parametru navigace
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    rootFrame.Navigate(typeof(Views.Main), e.Arguments);
                 }
                 // Zkontrolovat, jestli je aktuální okno aktivní
                 Window.Current.Activate();

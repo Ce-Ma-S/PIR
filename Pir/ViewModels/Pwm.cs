@@ -1,4 +1,5 @@
-﻿using Common.Events;
+﻿using Common;
+using Common.Events;
 using System;
 using System.Threading.Tasks;
 using Windows.Devices.Pwm;
@@ -6,22 +7,23 @@ using Windows.Devices.Pwm;
 namespace Pir.ViewModels
 {
     public class Pwm :
-        NotifyPropertyChange
+        NotifyPropertyChange,
+        IInitializable
     {
         #region Controller
 
-        public async Task Init() => controller = await Pwm​Controller.GetDefaultAsync();
+        public async Task Initialize() => controller = await Pwm​Controller.GetDefaultAsync();
 
-        public double? Frequency
+        public double Frequency
         {
-            get => controller?.ActualFrequency;
+            get => controller?.ActualFrequency ?? 0;
             set => SetPropertyValue(
                 () => Frequency,
-                () => controller?.SetDesiredFrequency(value ?? MinFrequency.Value)
+                () => controller?.SetDesiredFrequency(value)
                 );
         }
-        public double? MinFrequency => controller?.MinFrequency;
-        public double? MaxFrequency => controller?.MaxFrequency;
+        public double MinFrequency => controller?.MinFrequency ?? 0;
+        public double MaxFrequency => controller?.MaxFrequency ?? 0;
 
         private Pwm​Controller controller;
 
@@ -49,46 +51,40 @@ namespace Pir.ViewModels
         }
         private int? pinNumber;
 
-        public double? DutyCycle
+        public double DutyCycle
         {
-            get => pin?.GetActiveDutyCyclePercentage();
+            get => pin?.GetActiveDutyCyclePercentage() ?? 0;
             set => SetPropertyValue(
                 () => DutyCycle,
-                () => pin?.SetActiveDutyCyclePercentage(value.GetValueOrDefault()));
+                () => pin?.SetActiveDutyCyclePercentage(value));
         }
 
-        public bool? Negated
+        public bool Negated
         {
             get => pin?.Polarity == PwmPulsePolarity.ActiveLow;
             set => SetPropertyValue(
                 () => Negated,
                 () =>
                 {
-                    if (
-                        pin != null &&
-                        value.HasValue
-                        )
+                    if (pin != null)
                     {
-                        pin.Polarity = value.Value ?
+                        pin.Polarity = value ?
                             PwmPulsePolarity.ActiveLow :
                             PwmPulsePolarity.ActiveHigh;
                     }
                 });
         }
 
-        public bool? IsStarted
+        public bool IsStarted
         {
-            get => pin?.IsStarted;
+            get => pin?.IsStarted ?? false;
             set => SetPropertyValue(
                 () => IsStarted,
                 () =>
                 {
-                    if (
-                        pin != null &&
-                        value.HasValue
-                        )
+                    if (pin != null)
                     {
-                        if (value.Value)
+                        if (value)
                             pin.Start();
                         else
                             pin.Stop();
