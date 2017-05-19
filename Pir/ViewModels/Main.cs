@@ -1,6 +1,8 @@
 ﻿using Common;
 using Common.Events;
+using Microsoft.IoT.Lightning.Providers;
 using System.Threading.Tasks;
+using Windows.Devices;
 
 namespace Pir.ViewModels
 {
@@ -12,6 +14,8 @@ namespace Pir.ViewModels
 
         public async Task Initialize()
         {
+            if (LightningProvider.IsLightningEnabled)
+                LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
             await Pwm.Initialize();
         }
     }
