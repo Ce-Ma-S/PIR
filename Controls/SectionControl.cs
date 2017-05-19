@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Controls
 {
-    public sealed class SectionControl :
+    public class SectionControl :
         ContentControl
     {
         public SectionControl()
@@ -27,6 +27,15 @@ namespace Controls
         {
             get { return GetValue(HeaderContentProperty); }
             set { SetValue(HeaderContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty HeaderTemplateProperty = DependencyProperty.Register(
+            nameof(HeaderTemplate), typeof(DataTemplate), typeof(SectionControl), null);
+
+        public DataTemplate HeaderTemplate
+        {
+            get { return (DataTemplate)GetValue(HeaderTemplateProperty); }
+            set { SetValue(HeaderTemplateProperty, value); }
         }
 
         public static readonly DependencyProperty DescriptionProperty = DependencyProperty.Register(

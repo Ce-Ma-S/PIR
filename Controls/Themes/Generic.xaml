@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Controls">
 
-    <Style TargetType="local:SectionControl" >
+    <Style x:Key="SectionControlStyle" TargetType="local:SectionControl">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SectionControl">
@@ -20,7 +20,8 @@
                         <ContentPresenter
                             RelativePanel.RightOf="{Binding ElementName=header}"
                             RelativePanel.AlignVerticalCenterWith="{Binding ElementName=header}"
-                            Content="{TemplateBinding HeaderContent}"/>
+                            Content="{TemplateBinding HeaderContent}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"/>
                         <ContentPresenter
                             RelativePanel.Below="{Binding ElementName=header}"
                             Padding="{TemplateBinding Padding}"/>
@@ -30,7 +31,9 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:PropertyControl" >
+    <Style TargetType="local:SectionControl" BasedOn="{StaticResource SectionControlStyle}"/>
+
+    <Style TargetType="local:PropertyControl">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PropertyControl">

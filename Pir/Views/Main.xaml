@@ -13,7 +13,7 @@
             <PivotItem
                 Header="Ignition">
                 <views:Pwm
-                    DataContext="{x:Bind Model.Pwm}"/>
+                    Component="{x:Bind Model.Pwm}"/>
             </PivotItem>
             <PivotItem
                 Header="Monitoring">

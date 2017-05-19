@@ -1,5 +1,4 @@
-﻿using Common;
-using Common.Events;
+﻿using Common.Components;
 using System;
 using System.Threading.Tasks;
 using Windows.Devices.Pwm;
@@ -7,12 +6,17 @@ using Windows.Devices.Pwm;
 namespace Pir.ViewModels
 {
     public class Pwm :
-        NotifyPropertyChange,
-        IInitializable
+        Component
     {
+        public Pwm() :
+            base("PWM")
+        { }
+
+        public override string Description => "Pulse Width Modulation";
+
         #region Controller
 
-        public async Task Initialize() => controller = await Pwm​Controller.GetDefaultAsync();
+        public override async Task Initialize() => controller = await Pwm​Controller.GetDefaultAsync();
 
         public double Frequency
         {

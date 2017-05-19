@@ -1,10 +1,10 @@
 ﻿using Common.Views;
-using Windows.UI.Xaml.Controls;
+using Controls;
 
 namespace Pir.Views
 {
-    public sealed partial class Pwm :
-        UserControl,
+    public partial class Pwm :
+        ComponentControl,
         IViewOf<ViewModels.Pwm>
     {
         public Pwm()
@@ -14,8 +14,8 @@ namespace Pir.Views
 
         public ViewModels.Pwm Model
         {
-            get { return (ViewModels.Pwm)DataContext; }
-            private set { DataContext = value; }
+            get => (ViewModels.Pwm)DataContext;
+            private set => DataContext = value;
         }
     }
 }
