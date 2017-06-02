@@ -1,5 +1,5 @@
 ﻿<controls:ComponentControl
-    x:Class="Pir.Views.Pwm"
+    x:Class="Pir.Views.Amplifier"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Controls"
@@ -13,29 +13,21 @@
         Orientation="Horizontal"
         MaximumRowsOrColumns="3">
         <controls:PropertyControl
-            Header="Pin">
+            Header="Forward Pin">
             <telerik:RadNumericBox
                 Minimum="0"
-                Value="{Binding PinNumber, Mode=TwoWay}"/>
+                Value="{Binding ForwardPinNumber, Mode=TwoWay}"/>
         </controls:PropertyControl>
         <controls:PropertyControl
-                Header="Frequency">
-            <telerik:RadNumericBox
-                Minimum="{x:Bind Model.MinFrequency, Mode=OneWay}"
-                Maximum="{x:Bind Model.MaxFrequency, Mode=OneWay}"
-                Value="{Binding Frequency, Mode=TwoWay}"/>
-        </controls:PropertyControl>
-        <controls:PropertyControl
-            Header="Duty Cycle">
+            Header="Backward Pin">
             <telerik:RadNumericBox
                 Minimum="0"
-                Maximum="1"
-                Value="{Binding DutyCycle, Mode=TwoWay}"/>
+                Value="{Binding BackwardPinNumber, Mode=TwoWay}"/>
         </controls:PropertyControl>
         <controls:PropertyControl
-            Header="Negated">
+            Header="Reversed Polarity">
             <CheckBox
-                IsChecked="{Binding Negated, Mode=TwoWay}"/>
+                IsChecked="{Binding ReversedPolarity, Mode=TwoWay}"/>
         </controls:PropertyControl>
     </VariableSizedWrapGrid>
 </controls:ComponentControl>

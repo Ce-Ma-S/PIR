@@ -30,7 +30,7 @@ namespace Pir.ViewModels
         {
             if (LightningProvider.IsLightningEnabled)
                 LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
-            await base.Initialize();
+            await base.DoInitialize();
         }
     }
 }

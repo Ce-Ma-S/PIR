@@ -8,7 +8,7 @@ namespace Controls
     {
         public SectionControl()
         {
-            this.DefaultStyleKey = typeof(SectionControl);
+            DefaultStyleKey = typeof(SectionControl);
         }
 
         public static readonly DependencyProperty HeaderProperty = DependencyProperty.Register(

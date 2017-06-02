@@ -12,6 +12,7 @@ namespace Controls
     {
         public ComponentControl()
         {
+            DefaultStyleKey = typeof(ComponentControl);
             SetBinding(NameProperty, new Binding()
             {
                 Source = this,
@@ -26,6 +27,11 @@ namespace Controls
             {
                 Source = this,
                 Path = new PropertyPath($"{nameof(Component)}.{nameof(IComponent.Name)}")
+            });
+            SetBinding(HeaderContentProperty, new Binding()
+            {
+                Source = this,
+                Path = new PropertyPath($"{nameof(Component)}")
             });
             SetBinding(DescriptionProperty, new Binding()
             {

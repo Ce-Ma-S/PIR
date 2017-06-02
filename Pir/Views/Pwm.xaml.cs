@@ -12,10 +12,6 @@ namespace Pir.Views
             this.InitializeComponent();
         }
 
-        public ViewModels.Pwm Model
-        {
-            get => (ViewModels.Pwm)DataContext;
-            private set => DataContext = value;
-        }
+        public ViewModels.Pwm Model => (ViewModels.Pwm)DataContext;
     }
 }

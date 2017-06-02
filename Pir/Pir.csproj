@@ -103,6 +103,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Main.cs" />
     <Compile Include="ViewModels\Pwm.cs" />
+    <Compile Include="Views\Amplifier.xaml.cs">
+      <DependentUpon>Amplifier.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pwm.xaml.cs">
       <DependentUpon>Pwm.xaml</DependentUpon>
     </Compile>
@@ -129,6 +132,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Views\Main.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Amplifier.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

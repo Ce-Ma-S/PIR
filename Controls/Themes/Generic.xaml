@@ -33,6 +33,17 @@
 
     <Style TargetType="local:SectionControl" BasedOn="{StaticResource SectionControlStyle}"/>
 
+    <Style TargetType="local:ComponentControl" BasedOn="{StaticResource SectionControlStyle}">
+        <Setter Property="HeaderTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <ToggleSwitch
+                        IsOn="{Binding IsOn}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:PropertyControl">
         <Setter Property="Template">
             <Setter.Value>

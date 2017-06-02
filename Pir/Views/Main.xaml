@@ -2,19 +2,26 @@
     x:Class="Pir.Views.Main"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Controls"
     xmlns:local="using:Pir"
     xmlns:views="using:Pir.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
-    <RelativePanel>
+    <controls:ComponentControl
+        Component="{x:Bind Model}"
+        Margin="5">
+        <RelativePanel>
         <Pivot>
             <PivotItem
                 Header="Ignition">
-                <views:Pwm
-                    Component="{x:Bind Model.Pwm}"/>
-            </PivotItem>
+                <StackPanel>
+                    <views:Pwm
+                        Component="{x:Bind Model.Pwm}"/>
+                    <views:Amplifier
+                        Component="{x:Bind Model.Amplifier}"/>
+                    </StackPanel>
+                </PivotItem>
             <PivotItem
                 Header="Monitoring">
             </PivotItem>
@@ -29,4 +36,5 @@
             </PivotItem>
         </Pivot>
     </RelativePanel>
+    </controls:ComponentControl>
 </Page>
