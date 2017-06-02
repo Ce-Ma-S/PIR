@@ -2,7 +2,6 @@
 using Microsoft.IoT.Lightning.Providers;
 using System.Threading.Tasks;
 using Windows.Devices;
-using System;
 using System.Collections.Generic;
 
 namespace Pir.ViewModels
@@ -20,16 +19,18 @@ namespace Pir.ViewModels
             get
             {
                 yield return Pwm;
+                yield return Amplifier;
             }
         }
 
         public Pwm Pwm { get; } = new Pwm();
+        public Amplifier Amplifier { get; } = new Amplifier();
 
-        public override async Task Initialize()
+        protected override async Task DoInitialize()
         {
             if (LightningProvider.IsLightningEnabled)
                 LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
-            await Pwm.Initialize();
+            await base.Initialize();
         }
     }
 }

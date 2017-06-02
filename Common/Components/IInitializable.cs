@@ -4,6 +4,8 @@ namespace Common.Components
 {
     public interface IInitializable
     {
+        bool IsInitialized { get; }
+
         Task Initialize();
     }
 }

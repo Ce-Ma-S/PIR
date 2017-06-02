@@ -1,4 +1,5 @@
 ﻿using Common.Identity;
+using System;
 using System.Threading.Tasks;
 
 namespace Common.Components
@@ -11,6 +12,51 @@ namespace Common.Components
             base(id)
         { }
 
-        public abstract Task Initialize();
+        #region IInitializable
+
+        public bool IsInitialized { get; private set; }
+
+        public async Task Initialize()
+        {
+            if (IsInitialized)
+                throw new InvalidOperationException($"{Id} is already initialized.");
+            await DoInitialize();
+        }
+
+        protected virtual async Task DoInitialize() => await ApplyIsOn();
+
+        #endregion
+
+        #region ISwitchable
+
+        public bool IsOn
+        {
+            get => isOn;
+            set => SetPropertyValue(ref isOn, value, OnIsOnChanged);
+        }
+
+        protected async Task ApplyIsOn()
+        {
+            try
+            {
+                await DoApplyIsOn();
+            }
+            catch (Exception e)
+            {
+                SetPropertyValue(ref isOn, !IsOn, propertyName: nameof(IsOn));
+                throw;
+            }
+        }
+        protected abstract Task DoApplyIsOn();
+
+        protected virtual async void OnIsOnChanged()
+        {
+            if (IsInitialized)
+                await ApplyIsOn();
+        }
+
+        private bool isOn;
+
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Common.Components;
+using Common.Validation;
 using System;
 using System.Threading.Tasks;
 using Windows.Devices.Pwm;
@@ -6,7 +7,8 @@ using Windows.Devices.Pwm;
 namespace Pir.ViewModels
 {
     public class Pwm :
-        Component
+        Component,
+        ISwitchable
     {
         public Pwm() :
             base("PWM")
@@ -14,22 +16,47 @@ namespace Pir.ViewModels
 
         public override string Description => "Pulse Width Modulation";
 
-        #region Controller
+        protected override async Task DoApplyIsOn()
+        {
+            if (IsOn)
+            {
+                controller = await Pwm​Controller.GetDefaultAsync();
+                ApplyFrequency();
+                ApplyPinNumber();
+            }
+            else
+            {
+                ClosePin();
+                controller = null;
+            }
+        }
 
-        public override async Task Initialize() => controller = await Pwm​Controller.GetDefaultAsync();
+        #region Controller
 
         public double Frequency
         {
-            get => controller?.ActualFrequency ?? 0;
-            set => SetPropertyValue(
-                () => Frequency,
-                () => controller?.SetDesiredFrequency(value)
-                );
+            get => frequency;
+            set => SetPropertyValue(ref frequency, value, OnFrequencyChanged);
         }
+
+        private void ApplyFrequency()
+        {
+            ArgumentValidation.NonNull(controller, nameof(controller));
+            var value = controller.SetDesiredFrequency(Frequency);
+            SetPropertyValue(ref frequency, value, propertyName: nameof(Frequency));
+        }
+
+        private void OnFrequencyChanged()
+        {
+            if (IsOn)
+                ApplyFrequency();
+        }
+
         public double MinFrequency => controller?.MinFrequency ?? 0;
-        public double MaxFrequency => controller?.MaxFrequency ?? 0;
+        public double MaxFrequency => controller?.MaxFrequency ?? double.MaxValue;
 
         private Pwm​Controller controller;
+        private double frequency;
 
         #endregion
 
@@ -40,63 +67,90 @@ namespace Pir.ViewModels
             get => pinNumber;
             set => SetPropertyValue(ref pinNumber, value, OnPinNumberChanged);
         }
+
         private void OnPinNumberChanged()
         {
-            if (pin != null)
-            {
-                RemoveDisposables(pin);
-                pin = null;
-            }
+            if (IsOn)
+                ApplyPinNumber();
+        }
+        private void OpenPin()
+        {
             if (PinNumber.HasValue)
             {
                 pin = controller.OpenPin(PinNumber.Value);
                 AddDisposables(pin);
             }
         }
+        private void ClosePin()
+        {
+            if (pin != null)
+            {
+                RemoveDisposables(pin);
+                pin = null;
+            }
+        }
+        private void ApplyPinNumber()
+        {
+            ClosePin();
+            OpenPin();
+            ApplyNegated();
+            ApplyDutyCycle();
+            ApplyPinIsOn();
+        }
+        private void ApplyPinIsOn()
+        {
+            ValidatePin();
+            if (IsOn)
+                pin.Start();
+        }
+
         private int? pinNumber;
 
         public double DutyCycle
         {
-            get => pin?.GetActiveDutyCyclePercentage() ?? 0;
-            set => SetPropertyValue(
-                () => DutyCycle,
-                () => pin?.SetActiveDutyCyclePercentage(value));
+            get => dutyCycle;
+            set => SetPropertyValue(ref dutyCycle, value, OnDutyCycleChanged);
+        }
+
+        private void OnDutyCycleChanged()
+        {
+            if (IsOn)
+                ApplyDutyCycle();
+        }
+
+        private void ApplyDutyCycle()
+        {
+            ValidatePin();
+            pin.SetActiveDutyCyclePercentage(DutyCycle);
+            var value = pin.GetActiveDutyCyclePercentage();
+            SetPropertyValue(ref dutyCycle, value, propertyName: nameof(DutyCycle));
         }
 
         public bool Negated
         {
-            get => pin?.Polarity == PwmPulsePolarity.ActiveLow;
-            set => SetPropertyValue(
-                () => Negated,
-                () =>
-                {
-                    if (pin != null)
-                    {
-                        pin.Polarity = value ?
-                            PwmPulsePolarity.ActiveLow :
-                            PwmPulsePolarity.ActiveHigh;
-                    }
-                });
+            get => negated;
+            set => SetPropertyValue(ref negated, value, OnNegatedChanged);
         }
 
-        public bool IsStarted
+        private void OnNegatedChanged()
         {
-            get => pin?.IsStarted ?? false;
-            set => SetPropertyValue(
-                () => IsStarted,
-                () =>
-                {
-                    if (pin != null)
-                    {
-                        if (value)
-                            pin.Start();
-                        else
-                            pin.Stop();
-                    }
-                });
+            if (IsOn)
+                ApplyNegated();
         }
+
+        private void ApplyNegated()
+        {
+            ValidatePin();
+            pin.Polarity = Negated ?
+                PwmPulsePolarity.ActiveLow :
+                PwmPulsePolarity.ActiveHigh;
+        }
+
+        private void ValidatePin() => ArgumentValidation.NonNull(pin, nameof(pin));
 
         private Pwm​Pin pin;
+        private double dutyCycle;
+        private bool negated;
 
         #endregion
     }
