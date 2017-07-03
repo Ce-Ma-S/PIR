@@ -9,25 +9,9 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    <VariableSizedWrapGrid
-        Orientation="Horizontal"
-        MaximumRowsOrColumns="3">
-        <controls:PropertyControl
-            Header="Forward Pin">
-            <telerik:RadNumericBox
-                Minimum="0"
-                Value="{Binding ForwardPinNumber, Mode=TwoWay}"/>
-        </controls:PropertyControl>
-        <controls:PropertyControl
-            Header="Backward Pin">
-            <telerik:RadNumericBox
-                Minimum="0"
-                Value="{Binding BackwardPinNumber, Mode=TwoWay}"/>
-        </controls:PropertyControl>
-        <controls:PropertyControl
-            Header="Reversed Polarity">
-            <CheckBox
-                IsChecked="{Binding ReversedPolarity, Mode=TwoWay}"/>
-        </controls:PropertyControl>
-    </VariableSizedWrapGrid>
+    <controls:PropertyControl
+        Header="Reversed Polarity">
+        <CheckBox
+            IsChecked="{Binding ReversedPolarity, Mode=TwoWay}"/>
+    </controls:PropertyControl>
 </controls:ComponentControl>

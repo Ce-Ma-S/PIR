@@ -37,7 +37,7 @@ namespace Pir.ViewModels
 
         #region ForwardPin
 
-        public int? ForwardPinNumber
+        public int ForwardPinNumber
         {
             get => forwardPinNumber;
             set => SetPropertyValue(ref forwardPinNumber, value, OnForwardPinNumberChanged);
@@ -49,17 +49,17 @@ namespace Pir.ViewModels
                 ApplyPinNumber(ref forwardPin, ForwardPinNumber);
         }
 
-        private int? forwardPinNumber;
+        private int forwardPinNumber;
         private Gpio​Pin forwardPin;
 
         #endregion
 
         #region BackwardPin
 
-        public int? BackwardPinNumber
+        public int BackwardPinNumber
         {
-            get => forwardPinNumber;
-            set => SetPropertyValue(ref forwardPinNumber, value, OnBackwardPinNumberChanged);
+            get => backwardPinNumber;
+            set => SetPropertyValue(ref backwardPinNumber, value, OnBackwardPinNumberChanged);
         }
 
         private void OnBackwardPinNumberChanged()
@@ -68,24 +68,16 @@ namespace Pir.ViewModels
                 ApplyPinNumber(ref backwardPin, BackwardPinNumber);
         }
 
-        private int? backwardPinNumber;
+        private int backwardPinNumber;
         private Gpio​Pin backwardPin;
 
         #endregion
 
-        private GpioPin OpenPin(int? pinNumber)
+        private GpioPin OpenPin(int pinNumber)
         {
-            GpioPin pin;
-            if (pinNumber.HasValue)
-            {
-                pin = controller.OpenPin(pinNumber.Value);
-                pin.SetDriveMode(GpioPinDriveMode.Output);
-                AddDisposables(pin);
-            }
-            else
-            {
-                pin = null;
-            }
+            GpioPin pin = controller.OpenPin(pinNumber);
+            pin.SetDriveMode(GpioPinDriveMode.Output);
+            AddDisposables(pin);
             return pin;
         }
         private void ClosePin(ref GpioPin pin)
@@ -95,7 +87,7 @@ namespace Pir.ViewModels
             RemoveDisposables(pin);
             pin = null;
         }
-        private void ApplyPinNumber(ref GpioPin pin, int? pinNumber)
+        private void ApplyPinNumber(ref GpioPin pin, int pinNumber)
         {
             ClosePin(ref pin);
             pin = OpenPin(pinNumber);

@@ -41,7 +41,7 @@ namespace Common.Components
             {
                 await DoApplyIsOn();
             }
-            catch (Exception e)
+            catch
             {
                 SetPropertyValue(ref isOn, !IsOn, propertyName: nameof(IsOn));
                 throw;

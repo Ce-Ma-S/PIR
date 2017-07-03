@@ -1,5 +1,6 @@
 ﻿using Common.Components;
 using Common.Validation;
+using Microsoft.IoT.Lightning.Providers;
 using System;
 using System.Threading.Tasks;
 using Windows.Devices.Pwm;
@@ -20,8 +21,17 @@ namespace Pir.ViewModels
         {
             if (IsOn)
             {
-                controller = await Pwm​Controller.GetDefaultAsync();
-                ApplyFrequency();
+                //controller = await Pwm​Controller.GetDefaultAsync();
+                // TODO: how to get soft PWM without guessing or studying source code?
+                // https://github.com/ms-iot/lightning/blob/develop/Providers/PwmDeviceProvider.cpp
+                var controllers = await Pwm​Controller.GetControllersAsync(LightningPwmProvider.GetPwmProvider());
+                controller = controllers[1];    // software PWM
+                if (Frequency < controller.MinFrequency)
+                    Frequency = controller.MinFrequency;
+                else if (Frequency > controller.MaxFrequency)
+                    Frequency = controller.MaxFrequency;
+                else
+                    ApplyFrequency();
                 ApplyPinNumber();
             }
             else
@@ -62,7 +72,7 @@ namespace Pir.ViewModels
 
         #region Pin
 
-        public int? PinNumber
+        public int PinNumber
         {
             get => pinNumber;
             set => SetPropertyValue(ref pinNumber, value, OnPinNumberChanged);
@@ -75,11 +85,8 @@ namespace Pir.ViewModels
         }
         private void OpenPin()
         {
-            if (PinNumber.HasValue)
-            {
-                pin = controller.OpenPin(PinNumber.Value);
-                AddDisposables(pin);
-            }
+            pin = controller.OpenPin(PinNumber);
+            AddDisposables(pin);
         }
         private void ClosePin()
         {
@@ -104,7 +111,7 @@ namespace Pir.ViewModels
                 pin.Start();
         }
 
-        private int? pinNumber;
+        private int pinNumber;
 
         public double DutyCycle
         {

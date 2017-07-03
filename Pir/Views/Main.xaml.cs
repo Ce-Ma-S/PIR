@@ -1,4 +1,6 @@
-﻿using Common.Views;
+﻿using Common.Events.Messages;
+using Common.Views;
+using System;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,23 +20,14 @@ namespace Pir.Views
             Initialize();
         }
 
-        #region Progress
-
-        public static readonly DependencyProperty IsBusyProperty = DependencyProperty.Register(
-            nameof(IsBusy), typeof(bool), typeof(Main), null);
-
-        public bool IsBusy
-        {
-            get { return (bool)GetValue(IsBusyProperty); }
-            set { SetValue(IsBusyProperty, value); }
-        }
+        #region Message
 
         public static readonly DependencyProperty MessageProperty = DependencyProperty.Register(
-            nameof(Message), typeof(string), typeof(Main), null);
+            nameof(Message), typeof(Message), typeof(Main), null);
 
-        public string Message
+        public Message Message
         {
-            get { return (string)GetValue(MessageProperty); }
+            get { return (Message)GetValue(MessageProperty); }
             set { SetValue(MessageProperty, value); }
         }
 
@@ -50,15 +43,19 @@ namespace Pir.Views
         {
             try
             {
-                IsBusy = true;
-                Message = "Initializing...";
+                Message = new Progress(Model.Name, "Initializing...");
                 Model = new ViewModels.Main();
                 await Model.Initialize();
             }
+            catch (Exception e)
+            {
+                Message = new Error(Model.Name, e);
+            }
             finally
             {
+                Message = new Message(Model.Name, "Initialized");
+                await Task.Delay(TimeSpan.FromSeconds(5));
                 Message = null;
-                IsBusy = false;
             }
         }
     }

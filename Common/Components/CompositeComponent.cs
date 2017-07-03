@@ -17,14 +17,16 @@ namespace Common.Components
 
         protected override async Task DoInitialize()
         {
+            await base.DoInitialize();
             foreach (var component in Components)
                 await component.Initialize();
         }
 
-        protected override async Task DoApplyIsOn()
+        protected override Task DoApplyIsOn()
         {
             foreach (var component in Components)
                 component.IsOn = IsOn;
+            return Task.CompletedTask;
         }
 
         protected override void Dispose(bool disposing)

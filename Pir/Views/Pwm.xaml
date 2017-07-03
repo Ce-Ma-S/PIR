@@ -13,13 +13,7 @@
         Orientation="Horizontal"
         MaximumRowsOrColumns="3">
         <controls:PropertyControl
-            Header="Pin">
-            <telerik:RadNumericBox
-                Minimum="0"
-                Value="{Binding PinNumber, Mode=TwoWay}"/>
-        </controls:PropertyControl>
-        <controls:PropertyControl
-                Header="Frequency">
+            Header="Frequency">
             <telerik:RadNumericBox
                 Minimum="{x:Bind Model.MinFrequency, Mode=OneWay}"
                 Maximum="{x:Bind Model.MaxFrequency, Mode=OneWay}"

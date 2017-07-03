@@ -11,7 +11,9 @@ namespace Pir.ViewModels
     {
         public Main() :
             base("PIR")
-        { }
+        {
+            IsOn = true;
+        }
 
         public override string Description => "Plasmatic Implosion Reactor";
         public override IEnumerable<IComponent> Components
@@ -23,8 +25,15 @@ namespace Pir.ViewModels
             }
         }
 
-        public Pwm Pwm { get; } = new Pwm();
-        public Amplifier Amplifier { get; } = new Amplifier();
+        public Pwm Pwm { get; } = new Pwm()
+        {
+            PinNumber = 4
+        };
+        public Amplifier Amplifier { get; } = new Amplifier()
+        {
+            ForwardPinNumber = 3,
+            BackwardPinNumber = 2
+        };
 
         protected override async Task DoInitialize()
         {
