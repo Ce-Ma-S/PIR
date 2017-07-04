@@ -31,8 +31,8 @@ namespace Pir.ViewModels
         };
         public Amplifier Amplifier { get; } = new Amplifier()
         {
-            ForwardPinNumber = 3,
-            BackwardPinNumber = 2
+            ForwardPinNumber = 27,
+            BackwardPinNumber = 17
         };
 
         protected override async Task DoInitialize()
