@@ -20,7 +20,16 @@ namespace Common.Components
         {
             if (IsInitialized)
                 throw new InvalidOperationException($"{Id} is already initialized.");
-            await DoInitialize();
+            try
+            {
+                await DoInitialize();
+            }
+            catch
+            {
+                if (IsOn)
+                    IsOn = false;
+                throw;
+            }
         }
 
         protected virtual async Task DoInitialize() => await ApplyIsOn();

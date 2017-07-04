@@ -40,40 +40,52 @@
                 </PivotItem>
             </Pivot>
         </controls:ComponentControl>
+        <Rectangle
+            Fill="White"
+            Opacity="0.5"
+            Visibility="{x:Bind MessageVisibility, Mode=OneWay}"/>
         <ContentControl
             Content="{x:Bind Message}"
             ContentTemplateSelector="{StaticResource TypeNameDataTemplateSelector}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Visibility="{x:Bind MessageVisibility, Mode=OneWay}"
+            MaxWidth="333">
             <ContentControl.Resources>
                 <DataTemplate x:Key="MessageTemplate" x:DataType="messages:Message">
                     <StackPanel>
                         <TextBlock
-                            Text="{Binding Header}"
+                            Text="{x:Bind Header, Mode=OneWay}"
                             Style="{StaticResource HeaderTextBlockStyle}"
-                            TextWrapping="Wrap"/>
+                            TextWrapping="Wrap"
+                            HorizontalAlignment="Center"/>
                         <TextBlock
-                            Text="{Binding Content}"
-                            TextWrapping="Wrap"/>
+                            Text="{x:Bind Content, Mode=OneWay}"
+                            TextWrapping="Wrap"
+                            HorizontalAlignment="Center"/>
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate x:Key="ErrorTemplate" x:DataType="messages:Error">
                     <StackPanel>
                         <TextBlock
                             Foreground="Red"
-                            Text="{Binding Header}"
+                            Text="{x:Bind Header, Mode=OneWay}"
                             Style="{StaticResource HeaderTextBlockStyle}"
-                            TextWrapping="Wrap"/>
+                            TextWrapping="Wrap"
+                            HorizontalAlignment="Center"/>
                         <TextBlock
                             Foreground="Red"
-                            Text="{Binding Content}"
-                            TextWrapping="Wrap"/>
+                            Text="{x:Bind Content, Mode=OneWay}"
+                            TextWrapping="Wrap"
+                            HorizontalAlignment="Center"/>
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate x:Key="ProgressTemplate" x:DataType="messages:Progress">
                     <telerikControls:RadBusyIndicator
                         IsActive="{x:Bind IsBusy, Mode=OneWay}"
-                        Content="{x:Bind Content, Mode=OneWay}"
+                        Content="{x:Bind}"
                         ContentTemplate="{StaticResource MessageTemplate}"/>
                 </DataTemplate>
             </ContentControl.Resources>
