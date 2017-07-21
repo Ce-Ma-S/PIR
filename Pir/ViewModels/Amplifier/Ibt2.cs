@@ -4,15 +4,16 @@ using System;
 using System.Threading.Tasks;
 using Windows.Devices.Gpio;
 
-namespace Pir.ViewModels
+namespace Pir.ViewModels.Amplifier
 {
-    public class Amplifier :
+    public class Ibt2 :
         Component
     {
-        public Amplifier() :
-            base("Amplifier")
+        public Ibt2() :
+            base("Ibt2")
         { }
 
+        public override string Name => "Amplifier";
         public override string Description => "Digital Amplifier";
 
         protected override async Task DoSwitchOn()

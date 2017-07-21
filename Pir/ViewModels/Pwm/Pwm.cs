@@ -1,28 +1,25 @@
 ﻿using Common.Components;
 using Common.Validation;
-using Microsoft.IoT.Lightning.Providers;
-using System;
 using System.Threading.Tasks;
 using Windows.Devices.Pwm;
 
-namespace Pir.ViewModels
+namespace Pir.ViewModels.Pwm
 {
-    public class Pwm :
+    public abstract class Pwm :
         Component
     {
-        public Pwm() :
-            base("PWM")
+        public Pwm(string id) :
+            base(id)
         { }
 
+        public override string Name => "PWM";
         public override string Description => "Pulse Width Modulation";
+
+        protected abstract Task<Pwm​Controller> GetController();
 
         protected override async Task DoSwitchOn()
         {
-            //controller = await Pwm​Controller.GetDefaultAsync();
-            // TODO: how to get soft PWM without guessing or studying source code?
-            // https://github.com/ms-iot/lightning/blob/develop/Providers/PwmDeviceProvider.cpp
-            var controllers = await Pwm​Controller.GetControllersAsync(LightningPwmProvider.GetPwmProvider());
-            controller = controllers[1];    // software PWM
+            controller = await GetController();
             if (Frequency < controller.MinFrequency)
                 Frequency = controller.MinFrequency;
             else if (Frequency > controller.MaxFrequency)

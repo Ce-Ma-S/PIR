@@ -5,13 +5,13 @@ namespace Pir.Views
 {
     public partial class Amplifier :
         ComponentControl,
-        IViewOf<ViewModels.Amplifier>
+        IViewOf<ViewModels.Ibt2>
     {
         public Amplifier()
         {
             this.InitializeComponent();
         }
 
-        public ViewModels.Amplifier Model => (ViewModels.Amplifier)DataContext;
+        public ViewModels.Ibt2 Model => (ViewModels.Ibt2)DataContext;
     }
 }

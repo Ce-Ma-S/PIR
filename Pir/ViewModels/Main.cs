@@ -1,5 +1,7 @@
 ﻿using Common.Components;
 using Microsoft.IoT.Lightning.Providers;
+using Pir.ViewModels.Amplifier;
+using Pir.ViewModels.Pwm;
 using System.Collections.Generic;
 using Windows.Devices;
 
@@ -25,11 +27,11 @@ namespace Pir.ViewModels
             }
         }
 
-        public Pwm Pwm { get; } = new Pwm()
+        public SoftwarePwm Pwm { get; } = new SoftwarePwm()
         {
             PinNumber = 4
         };
-        public Amplifier Amplifier { get; } = new Amplifier()
+        public Ibt2 Amplifier { get; } = new Ibt2()
         {
             ForwardPinNumber = 27,
             BackwardPinNumber = 17
