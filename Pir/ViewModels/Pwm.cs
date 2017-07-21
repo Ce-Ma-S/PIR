@@ -8,8 +8,7 @@ using Windows.Devices.Pwm;
 namespace Pir.ViewModels
 {
     public class Pwm :
-        Component,
-        ISwitchable
+        Component
     {
         public Pwm() :
             base("PWM")
@@ -17,28 +16,26 @@ namespace Pir.ViewModels
 
         public override string Description => "Pulse Width Modulation";
 
-        protected override async Task DoApplyIsOn()
+        protected override async Task DoSwitchOn()
         {
-            if (IsOn)
-            {
-                //controller = await Pwm​Controller.GetDefaultAsync();
-                // TODO: how to get soft PWM without guessing or studying source code?
-                // https://github.com/ms-iot/lightning/blob/develop/Providers/PwmDeviceProvider.cpp
-                var controllers = await Pwm​Controller.GetControllersAsync(LightningPwmProvider.GetPwmProvider());
-                controller = controllers[1];    // software PWM
-                if (Frequency < controller.MinFrequency)
-                    Frequency = controller.MinFrequency;
-                else if (Frequency > controller.MaxFrequency)
-                    Frequency = controller.MaxFrequency;
-                else
-                    ApplyFrequency();
-                ApplyPinNumber();
-            }
+            //controller = await Pwm​Controller.GetDefaultAsync();
+            // TODO: how to get soft PWM without guessing or studying source code?
+            // https://github.com/ms-iot/lightning/blob/develop/Providers/PwmDeviceProvider.cpp
+            var controllers = await Pwm​Controller.GetControllersAsync(LightningPwmProvider.GetPwmProvider());
+            controller = controllers[1];    // software PWM
+            if (Frequency < controller.MinFrequency)
+                Frequency = controller.MinFrequency;
+            else if (Frequency > controller.MaxFrequency)
+                Frequency = controller.MaxFrequency;
             else
-            {
-                ClosePin();
-                controller = null;
-            }
+                ApplyFrequency();
+            ApplyPinNumber();
+        }
+        protected override Task DoSwitchOff()
+        {
+            ClosePin();
+            controller = null;
+            return Task.CompletedTask;
         }
 
         #region Controller
@@ -58,7 +55,7 @@ namespace Pir.ViewModels
 
         private void OnFrequencyChanged()
         {
-            if (IsOn)
+            if (IsOn == true)
                 ApplyFrequency();
         }
 
@@ -80,7 +77,7 @@ namespace Pir.ViewModels
 
         private void OnPinNumberChanged()
         {
-            if (IsOn)
+            if (IsOn == true)
                 ApplyPinNumber();
         }
         private void OpenPin()
@@ -107,7 +104,7 @@ namespace Pir.ViewModels
         private void ApplyPinIsOn()
         {
             ValidatePin();
-            if (IsOn)
+            if (IsOn == true)
                 pin.Start();
         }
 
@@ -121,7 +118,7 @@ namespace Pir.ViewModels
 
         private void OnDutyCycleChanged()
         {
-            if (IsOn)
+            if (IsOn == true)
                 ApplyDutyCycle();
         }
 
@@ -141,7 +138,7 @@ namespace Pir.ViewModels
 
         private void OnNegatedChanged()
         {
-            if (IsOn)
+            if (IsOn == true)
                 ApplyNegated();
         }
 

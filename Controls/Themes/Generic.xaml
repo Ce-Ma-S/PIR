@@ -37,8 +37,8 @@
         <Setter Property="HeaderTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <ToggleSwitch
-                        IsOn="{Binding IsOn}"/>
+                    <ToggleSwitch x:Name="Switch"
+                        local:ComponentSwitch.Setup="True"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>

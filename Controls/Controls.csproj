@@ -107,6 +107,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ComponentControl.cs" />
+    <Compile Include="ComponentSwitch.cs" />
+    <Compile Include="Converters\IsNotNullConverter.cs" />
     <Compile Include="PropertyControl.cs" />
     <Compile Include="SectionControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

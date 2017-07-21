@@ -7,8 +7,7 @@ using Windows.Devices.Gpio;
 namespace Pir.ViewModels
 {
     public class Amplifier :
-        Component,
-        ISwitchable
+        Component
     {
         public Amplifier() :
             base("Amplifier")
@@ -16,21 +15,19 @@ namespace Pir.ViewModels
 
         public override string Description => "Digital Amplifier";
 
-        protected override async Task DoApplyIsOn()
+        protected override async Task DoSwitchOn()
         {
-            if (IsOn)
-            {
-                controller = await GpioController.GetDefaultAsync();
-                forwardPin = OpenPin(ForwardPinNumber);
-                backwardPin = OpenPin(BackwardPinNumber);
-                ApplyReversedPolarity();
-            }
-            else
-            {
-                ClosePin(ref forwardPin);
-                ClosePin(ref backwardPin);
-                controller = null;
-            }
+            controller = await GpioController.GetDefaultAsync();
+            forwardPin = OpenPin(ForwardPinNumber);
+            backwardPin = OpenPin(BackwardPinNumber);
+            ApplyReversedPolarity();
+        }
+        protected override Task DoSwitchOff()
+        {
+            ClosePin(ref forwardPin);
+            ClosePin(ref backwardPin);
+            controller = null;
+            return Task.CompletedTask;
         }
 
         #region Pins
@@ -45,7 +42,7 @@ namespace Pir.ViewModels
 
         private void OnForwardPinNumberChanged()
         {
-            if (IsOn)
+            if (IsOn == true)
                 ApplyPinNumber(ref forwardPin, ForwardPinNumber);
         }
 
@@ -64,7 +61,7 @@ namespace Pir.ViewModels
 
         private void OnBackwardPinNumberChanged()
         {
-            if (IsOn)
+            if (IsOn == true)
                 ApplyPinNumber(ref backwardPin, BackwardPinNumber);
         }
 
@@ -120,7 +117,7 @@ namespace Pir.ViewModels
 
         private void OnReversedPolarityChanged()
         {
-            if (IsOn)
+            if (IsOn == true)
                 ApplyReversedPolarity();
         }
 

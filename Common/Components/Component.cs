@@ -12,59 +12,93 @@ namespace Common.Components
             base(id)
         { }
 
-        #region IInitializable
-
-        public bool IsInitialized { get; private set; }
-
-        public async Task Initialize()
-        {
-            if (IsInitialized)
-                throw new InvalidOperationException($"{Id} is already initialized.");
-            try
-            {
-                await DoInitialize();
-            }
-            catch
-            {
-                if (IsOn)
-                    IsOn = false;
-                throw;
-            }
-        }
-
-        protected virtual async Task DoInitialize() => await ApplyIsOn();
-
-        #endregion
-
         #region ISwitchable
 
-        public bool IsOn
+        public bool? IsOn
         {
-            get => isOn;
-            set => SetPropertyValue(ref isOn, value, OnIsOnChanged);
+            get
+            {
+                bool? isOn;
+                switch (SwitchState)
+                {
+                    case SwitchState.SwitchedOff:
+                        isOn = false;
+                        break;
+                    case SwitchState.SwitchedOn:
+                        isOn = true;
+                        break;
+                    case SwitchState.SwitchingOn:
+                    case SwitchState.SwitchingOff:
+                    default:
+                        isOn = null;
+                        break;
+                }
+                return isOn;
+            }
+        }
+        public SwitchState SwitchState
+        {
+            get => switchState;
+            private set => SetPropertyValue(ref switchState, value, OnSwitchStateChanged);
         }
 
-        protected async Task ApplyIsOn()
+        public async Task SwitchOn()
         {
+            switch (SwitchState)
+            {
+                case SwitchState.SwitchingOn:
+                    throw new InvalidOperationException($"{Id} is already switching on.");
+                case SwitchState.SwitchedOn:
+                    throw new InvalidOperationException($"{Id} is already switched on.");
+                case SwitchState.SwitchingOff:
+                    throw new InvalidOperationException($"{Id} is switching off.");
+                case SwitchState.SwitchedOff:
+                default:
+                    break;
+            }
             try
             {
-                await DoApplyIsOn();
+                SwitchState = SwitchState.SwitchingOn;
+                await DoSwitchOn();
+                SwitchState = SwitchState.SwitchedOn;
             }
-            catch
+            finally
             {
-                SetPropertyValue(ref isOn, !IsOn, propertyName: nameof(IsOn));
-                throw;
+                SwitchState = SwitchState.SwitchedOff;
             }
         }
-        protected abstract Task DoApplyIsOn();
+        protected abstract Task DoSwitchOn();
 
-        protected virtual async void OnIsOnChanged()
+        public async Task SwitchOff()
         {
-            if (IsInitialized)
-                await ApplyIsOn();
+            switch (SwitchState)
+            {
+                case SwitchState.SwitchingOff:
+                    throw new InvalidOperationException($"{Id} is already switching off.");
+                case SwitchState.SwitchedOff:
+                    throw new InvalidOperationException($"{Id} is already switched off.");
+                case SwitchState.SwitchingOn:
+                    throw new InvalidOperationException($"{Id} is switching on.");
+                case SwitchState.SwitchedOn:
+                default:
+                    break;
+            }
+            try
+            {
+                SwitchState = SwitchState.SwitchingOff;
+                await DoSwitchOff();
+                SwitchState = SwitchState.SwitchedOff;
+            }
+            finally
+            {
+                SwitchState = SwitchState.SwitchedOn;
+            }
         }
+        protected abstract Task DoSwitchOff();
 
-        private bool isOn;
+        protected virtual void OnSwitchStateChanged() => OnPropertyChanged(nameof(IsOn));
+
+        private SwitchState switchState;
 
         #endregion
     }

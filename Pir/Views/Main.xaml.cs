@@ -59,9 +59,9 @@ namespace Pir.Views
             try
             {
                 Model = new ViewModels.Main();
-                Message = new Progress(Model.Name, "Initializing...");
-                await Model.Initialize();
-                Message = new Message(Model.Name, "Initialized");
+                Message = new Progress(Model.Name, "Switching on...");
+                await Model.SwitchOn();
+                Message = new Message(Model.Name, "Switched on");
                 await Task.Delay(TimeSpan.FromSeconds(5));
                 Message = null;
             }

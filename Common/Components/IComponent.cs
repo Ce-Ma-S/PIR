@@ -5,7 +5,6 @@ namespace Common.Components
 {
     public interface IComponent :
         IIdentity<string>,
-        IInitializable,
         ISwitchable,
         IDisposable
     { }

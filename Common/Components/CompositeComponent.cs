@@ -16,43 +16,25 @@ namespace Common.Components
         public IComponent this[string id] => Components.
             FirstOrDefault(i => i.Id == id);
 
-        protected override async Task DoInitialize()
-        {
-            await base.DoInitialize();
-            var errors = new List<Exception>();
-            foreach (var component in Components)
-            {
-                try
-                {
-                    await component.Initialize();
-                }
-                catch (Exception e)
-                {
-                    errors.Add(new Exception($"Initialization of {component} failed", e));
-                }
-            }
-            if (errors.Count > 0)
-                throw new AggregateException("Initialization failed", errors);
-        }
+        protected override async Task DoSwitchOn() => await SwitchComponents(i => i.SwitchOn(), "on");
+        protected override async Task DoSwitchOff() => await SwitchComponents(i => i.SwitchOff(), "off");
 
-        protected override Task DoApplyIsOn()
+        private async Task SwitchComponents(Func<IComponent, Task> action, string name)
         {
             var errors = new List<Exception>();
-            var switchText = IsOn ? "on" : "off";
             foreach (var component in Components)
             {
                 try
                 {
-                    component.IsOn = IsOn;
+                    await action(component);
                 }
                 catch (Exception e)
                 {
-                    errors.Add(new Exception($"Switching {switchText} of {component} failed", e));
+                    errors.Add(new Exception($"{component.Id} failed", e));
                 }
             }
             if (errors.Count > 0)
-                throw new AggregateException($"Switching {switchText} failed", errors);
-            return Task.CompletedTask;
+                throw new AggregateException($"{Id} switching {name} failed", errors);
         }
 
         protected override void Dispose(bool disposing)

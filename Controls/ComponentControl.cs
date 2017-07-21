@@ -1,5 +1,6 @@
 ﻿using Common.Components;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
 namespace Controls
@@ -47,6 +48,12 @@ namespace Controls
         {
             get { return (IComponent)GetValue(ComponentProperty); }
             set { SetValue(ComponentProperty, value); }
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            GetTemplateChild("Switch");
         }
     }
 }

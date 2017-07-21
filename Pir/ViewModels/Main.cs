@@ -1,8 +1,7 @@
 ﻿using Common.Components;
 using Microsoft.IoT.Lightning.Providers;
-using System.Threading.Tasks;
-using Windows.Devices;
 using System.Collections.Generic;
+using Windows.Devices;
 
 namespace Pir.ViewModels
 {
@@ -12,7 +11,8 @@ namespace Pir.ViewModels
         public Main() :
             base("PIR")
         {
-            IsOn = true;
+            if (LightningProvider.IsLightningEnabled)
+                LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
         }
 
         public override string Description => "Plasmatic Implosion Reactor";
@@ -34,12 +34,5 @@ namespace Pir.ViewModels
             ForwardPinNumber = 27,
             BackwardPinNumber = 17
         };
-
-        protected override async Task DoInitialize()
-        {
-            if (LightningProvider.IsLightningEnabled)
-                LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
-            await base.DoInitialize();
-        }
     }
 }
