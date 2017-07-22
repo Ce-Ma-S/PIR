@@ -1,4 +1,5 @@
-﻿using Common.Identity;
+﻿using Common.Events.Messages;
+using Common.Identity;
 using System;
 using System.Threading.Tasks;
 
@@ -58,13 +59,19 @@ namespace Common.Components
             }
             try
             {
-                SwitchState = SwitchState.SwitchingOn;
-                await DoSwitchOn();
-                SwitchState = SwitchState.SwitchedOn;
+                await DoWithProgress(async () =>
+                {
+                    SwitchState = SwitchState.SwitchingOn;
+                    await DoSwitchOn();
+                    SwitchState = SwitchState.SwitchedOn;
+                },
+                "Switch on"
+                );
             }
-            finally
+            catch
             {
                 SwitchState = SwitchState.SwitchedOff;
+                throw;
             }
         }
         protected abstract Task DoSwitchOn();
@@ -85,13 +92,19 @@ namespace Common.Components
             }
             try
             {
-                SwitchState = SwitchState.SwitchingOff;
-                await DoSwitchOff();
-                SwitchState = SwitchState.SwitchedOff;
+                await DoWithProgress(async () =>
+                {
+                    SwitchState = SwitchState.SwitchingOff;
+                    await DoSwitchOff();
+                    SwitchState = SwitchState.SwitchedOff;
+                },
+                "Switch off"
+                );
             }
-            finally
+            catch
             {
                 SwitchState = SwitchState.SwitchedOn;
+                throw;
             }
         }
         protected abstract Task DoSwitchOff();
@@ -99,6 +112,41 @@ namespace Common.Components
         protected virtual void OnSwitchStateChanged() => OnPropertyChanged(nameof(IsOn));
 
         private SwitchState switchState;
+
+        #endregion
+
+        #region Message
+
+        public Message Message
+        {
+            get => message;
+            protected set => SetPropertyValue(ref message, value);
+        }
+
+        protected async Task DoWithProgress(Func<Task> action, string name)
+        {
+            try
+            {
+                Message = new Progress(Name, name);
+                await action();
+                Message = null;
+            }
+            catch (Exception e)
+            {
+                Publish(e, name);
+                throw;
+            }
+        }
+
+        protected void Publish(Exception error, string name = null) => Message = new Error(
+            Name,
+            name == null ?
+                null :
+                $"{name} failed",
+            error
+            );
+
+        private Message message;
 
         #endregion
     }

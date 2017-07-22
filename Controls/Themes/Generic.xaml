@@ -1,7 +1,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Controls">
+    xmlns:local="using:Controls"
+    xmlns:telerikControls="using:Telerik.UI.Xaml.Controls.Primitives">
 
     <Style x:Key="SectionControlStyle" TargetType="local:SectionControl">
         <Setter Property="Template">
@@ -31,8 +32,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:SectionControl" BasedOn="{StaticResource SectionControlStyle}"/>
-
     <Style TargetType="local:ComponentControl" BasedOn="{StaticResource SectionControlStyle}">
         <Setter Property="HeaderTemplate">
             <Setter.Value>
@@ -40,6 +39,35 @@
                     <ToggleSwitch x:Name="Switch"
                         local:ComponentSwitch.Setup="True"/>
                 </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SectionControl">
+                    <RelativePanel
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}"
+                        ToolTipService.ToolTip="{TemplateBinding Description}">
+                        <TextBlock x:Name="header"
+                            Text="{TemplateBinding Header}"
+                            Style="{StaticResource HeaderTextBlockStyle}"
+                            Margin="0,0,10,0"/>
+                        <ContentPresenter
+                            RelativePanel.RightOf="{Binding ElementName=header}"
+                            RelativePanel.AlignVerticalCenterWith="{Binding ElementName=header}"
+                            Content="{TemplateBinding HeaderContent}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"/>
+                        <Grid
+                            RelativePanel.Below="{Binding ElementName=header}">
+                            <ContentPresenter
+                                Padding="{TemplateBinding Padding}"/>
+                            <local:MessageControl
+                                Message="{Binding Message}"/>
+                        </Grid>
+                    </RelativePanel>
+                </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
@@ -66,6 +94,68 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Margin" Value="0,2"/>
+    </Style>
+
+    <local:TypeNameDataTemplateSelector x:Key="TypeNameDataTemplateSelector"/>
+
+    <Style TargetType="local:MessageControl" >
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Opacity" Value="0.5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MessageControl">
+                    <ContentControl
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Content="{TemplateBinding Message}"
+                            ContentTemplateSelector="{StaticResource TypeNameDataTemplateSelector}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center">
+                        <ContentControl.Resources>
+                            <DataTemplate x:Key="MessageTemplate">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{Binding Header}"
+                                        Style="{StaticResource HeaderTextBlockStyle}"
+                                        TextWrapping="Wrap"
+                                        HorizontalAlignment="Center"/>
+                                    <TextBlock
+                                        Text="{Binding Content}"
+                                        TextWrapping="Wrap"
+                                        HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+
+                            <DataTemplate x:Key="ErrorTemplate">
+                                <StackPanel>
+                                    <TextBlock
+                                        Foreground="Red"
+                                        Text="{Binding Header}"
+                                        Style="{StaticResource HeaderTextBlockStyle}"
+                                        TextWrapping="Wrap"
+                                        HorizontalAlignment="Center"/>
+                                    <TextBlock
+                                        Foreground="Red"
+                                        Text="{Binding Content}"
+                                        TextWrapping="Wrap"
+                                        HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+
+                            <DataTemplate x:Key="ProgressTemplate">
+                                <telerikControls:RadBusyIndicator
+                                    IsActive="{Binding IsBusy}"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource MessageTemplate}"/>
+                            </DataTemplate>
+                        </ContentControl.Resources>
+                    </ContentControl>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>

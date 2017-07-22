@@ -6,91 +6,34 @@
     xmlns:views="using:Pir.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:messages="using:Common.Events.Messages"
-    xmlns:telerikControls="using:Telerik.UI.Xaml.Controls.Primitives"
     mc:Ignorable="d">
-    <Page.Resources>
-        <controls:TypeNameDataTemplateSelector x:Key="TypeNameDataTemplateSelector"/>
-    </Page.Resources>
-    <Grid>
-        <controls:ComponentControl
-            Component="{x:Bind Model}"
-            Margin="5">
-            <Pivot>
-                <PivotItem
-                    Header="Ignition">
-                    <StackPanel>
-                        <views:Pwm
-                            Component="{x:Bind Model.Pwm}"/>
-                        <views:Amplifier
-                            Component="{x:Bind Model.Amplifier}"/>
-                        </StackPanel>
-                    </PivotItem>
-                <PivotItem
-                    Header="Monitoring">
-                    <views:Magnetometer
-                        Component="{x:Bind Model.Magnetometer}"/>
-                </PivotItem>
-                <PivotItem
-                    Header="Feedback">
-                </PivotItem>
-                <PivotItem
-                    Header="Growth">
-                </PivotItem>
-                <PivotItem
-                    Header="Autonomy">
-                </PivotItem>
-            </Pivot>
-        </controls:ComponentControl>
-        <Rectangle
-            Fill="White"
-            Opacity="0.5"
-            Visibility="{x:Bind MessageVisibility, Mode=OneWay}"/>
-        <ContentControl
-            Content="{x:Bind Message}"
-            ContentTemplateSelector="{StaticResource TypeNameDataTemplateSelector}"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Visibility="{x:Bind MessageVisibility, Mode=OneWay}"
-            MaxWidth="333">
-            <ContentControl.Resources>
-                <DataTemplate x:Key="MessageTemplate" x:DataType="messages:Message">
-                    <StackPanel>
-                        <TextBlock
-                            Text="{x:Bind Header, Mode=OneWay}"
-                            Style="{StaticResource HeaderTextBlockStyle}"
-                            TextWrapping="Wrap"
-                            HorizontalAlignment="Center"/>
-                        <TextBlock
-                            Text="{x:Bind Content, Mode=OneWay}"
-                            TextWrapping="Wrap"
-                            HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </DataTemplate>
-                <DataTemplate x:Key="ErrorTemplate" x:DataType="messages:Error">
-                    <StackPanel>
-                        <TextBlock
-                            Foreground="Red"
-                            Text="{x:Bind Header, Mode=OneWay}"
-                            Style="{StaticResource HeaderTextBlockStyle}"
-                            TextWrapping="Wrap"
-                            HorizontalAlignment="Center"/>
-                        <TextBlock
-                            Foreground="Red"
-                            Text="{x:Bind Content, Mode=OneWay}"
-                            TextWrapping="Wrap"
-                            HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </DataTemplate>
-                <DataTemplate x:Key="ProgressTemplate" x:DataType="messages:Progress">
-                    <telerikControls:RadBusyIndicator
-                        IsActive="{x:Bind IsBusy, Mode=OneWay}"
-                        Content="{x:Bind}"
-                        ContentTemplate="{StaticResource MessageTemplate}"/>
-                </DataTemplate>
-            </ContentControl.Resources>
-        </ContentControl>
-    </Grid>
+    <controls:ComponentControl
+        Component="{x:Bind Model}"
+        Margin="5">
+        <Pivot>
+            <PivotItem
+                Header="Ignition">
+                <StackPanel>
+                    <views:Pwm
+                        Component="{x:Bind Model.Pwm}"/>
+                    <views:Amplifier
+                        Component="{x:Bind Model.Amplifier}"/>
+                </StackPanel>
+            </PivotItem>
+            <PivotItem
+                Header="Monitoring">
+                <views:Magnetometer
+                    Component="{x:Bind Model.Magnetometer}"/>
+            </PivotItem>
+            <PivotItem
+                Header="Feedback">
+            </PivotItem>
+            <PivotItem
+                Header="Growth">
+            </PivotItem>
+            <PivotItem
+                Header="Autonomy">
+            </PivotItem>
+        </Pivot>
+    </controls:ComponentControl>
 </Page>

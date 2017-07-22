@@ -109,6 +109,7 @@
     <Compile Include="ComponentControl.cs" />
     <Compile Include="ComponentSwitch.cs" />
     <Compile Include="Converters\IsNotNullConverter.cs" />
+    <Compile Include="MessageControl.cs" />
     <Compile Include="PropertyControl.cs" />
     <Compile Include="SectionControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -118,6 +119,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>5.3.3</Version>
+    </PackageReference>
+    <PackageReference Include="Telerik.UI.for.UniversalWindowsPlatform">
+      <Version>1.0.0.4</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

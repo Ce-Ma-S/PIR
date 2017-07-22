@@ -7,7 +7,7 @@ namespace Common.Events
     /// <summary>
     /// Helps with events.
     /// </summary>
-    public static class EventHelper
+    public static class Events
     {
         #region RaiseEvent
         

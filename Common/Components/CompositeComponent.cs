@@ -16,17 +16,27 @@ namespace Common.Components
         public IComponent this[string id] => Components.
             FirstOrDefault(i => i.Id == id);
 
-        protected override async Task DoSwitchOn() => await SwitchComponents(i => i.SwitchOn(), "on");
-        protected override async Task DoSwitchOff() => await SwitchComponents(i => i.SwitchOff(), "off");
+        protected override async Task DoSwitchOn() => await SwitchComponents(true);
+        protected override async Task DoSwitchOff() => await SwitchComponents(false);
 
-        private async Task SwitchComponents(Func<IComponent, Task> action, string name)
+        private async Task SwitchComponents(bool on)
         {
+            string name = on ? "on" : "off";
             var errors = new List<Exception>();
             foreach (var component in Components)
             {
                 try
                 {
-                    await action(component);
+                    if (on)
+                    {
+                        if (component.IsOn == false)
+                            await component.SwitchOn();
+                    }
+                    else
+                    {
+                        if (component.IsOn == true)
+                            await component.SwitchOff();
+                    }
                 }
                 catch (Exception e)
                 {

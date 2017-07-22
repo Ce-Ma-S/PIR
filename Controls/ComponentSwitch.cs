@@ -23,13 +23,7 @@ namespace Controls
             var @switch = (ToggleSwitch)d;
             if (@switch == null)
                 return;
-            @switch.SetBinding(
-                ToggleSwitch.IsOnProperty,
-                new Binding()
-                {
-                    Path = new PropertyPath(nameof(IComponent.IsOn)),
-                    Mode = BindingMode.OneWay
-                });
+            BindIsOn(@switch);
             @switch.SetBinding(
                 Control.IsEnabledProperty,
                 new Binding()
@@ -38,6 +32,17 @@ namespace Controls
                     Converter = IsNotNullConverter.Instance
                 });
             @switch.Toggled += OnSwitchToggled;
+        }
+
+        private static void BindIsOn(ToggleSwitch @switch)
+        {
+            @switch.SetBinding(
+                ToggleSwitch.IsOnProperty,
+                new Binding()
+                {
+                    Path = new PropertyPath(nameof(IComponent.IsOn)),
+                    Mode = BindingMode.OneWay
+                });
         }
 
         private static async void OnSwitchToggled(object sender, RoutedEventArgs e)
@@ -49,9 +54,10 @@ namespace Controls
             if (!@switch.IsOn == component.IsOn)
             {
                 if (@switch.IsOn)
-                    await component.SwitchOn();
+                    await component.SwitchOnSafe();
                 else
-                    await component.SwitchOff();
+                    await component.SwitchOffSafe();
+                BindIsOn(@switch);
             }
         }
     }
