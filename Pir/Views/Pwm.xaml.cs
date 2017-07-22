@@ -5,13 +5,13 @@ namespace Pir.Views
 {
     public partial class Pwm :
         ComponentControl,
-        IViewOf<ViewModels.Pwm>
+        IViewOf<ViewModels.Pwm.Pwm>
     {
         public Pwm()
         {
             this.InitializeComponent();
         }
 
-        public ViewModels.Pwm Model => (ViewModels.Pwm)DataContext;
+        public ViewModels.Pwm.Pwm Model => (ViewModels.Pwm.Pwm)DataContext;
     }
 }

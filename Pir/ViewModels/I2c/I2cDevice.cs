@@ -13,17 +13,26 @@ namespace Pir.ViewModels.I2c
         { }
 
         public abstract int Address { get; }
+        public virtual I2cBusSpeed BusSpeed => I2cBusSpeed.StandardMode;
+        public virtual I2cSharingMode SharingMode => I2cSharingMode.Exclusive;
 
         protected Windows.Devices.I2c.I2cDevice Device { get; private set; }
 
         protected override async Task DoSwitchOn()
         {
             controller = await I2cController.GetDefaultAsync();
-            Device = controller.GetDevice(new I2cConnectionSettings(Address));
+            var connectionSettings = new I2cConnectionSettings(Address)
+            {
+                BusSpeed = BusSpeed,
+                SharingMode = SharingMode
+            };
+            Device = controller.GetDevice(connectionSettings);
+            AddDisposables(Device);
         }
+
         protected override Task DoSwitchOff()
         {
-            Device.Dispose();
+            RemoveDisposables(Device);
             Device = null;
             controller = null;
             return Task.CompletedTask;

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Common.Validation
@@ -45,6 +47,12 @@ namespace Common.Validation
         {
             GreaterThanOrEqualTo(value, from);
             LessThanOrEqualTo(value, to);
+            return value;
+        }
+        public static T In<T>(T value, IEnumerable<T> values, [CallerMemberName] string name = null)
+        {
+            if (!values.Contains(value))
+                throw new ArgumentOutOfRangeException(name, value, $"Value is unknown.");
             return value;
         }
     }
