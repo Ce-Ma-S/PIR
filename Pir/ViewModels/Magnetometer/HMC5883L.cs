@@ -2,17 +2,16 @@
 using Common.Validation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.I2c;
 
 namespace Pir.ViewModels.Magnetometer
 {
-    public class HMC5883L :
+    public class Hmc5883l :
         I2c.I2cDevice
     {
-        public HMC5883L() :
+        public Hmc5883l() :
             base("HMC5883L")
         { }
 
@@ -323,6 +322,8 @@ namespace Pir.ViewModels.Magnetometer
                 z / Range.Gain
                 );
         }
+
+        public override string ToString() => $"B = {Value.Length} +- {Range.Resolution} T\nBX = {Value.X} T\nBY = {Value.Y} T\nBZ = {Value.Z} T";
 
         private Vector3d value;
 

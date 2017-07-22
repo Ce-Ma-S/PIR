@@ -28,6 +28,8 @@
                     </PivotItem>
                 <PivotItem
                     Header="Monitoring">
+                    <views:Magnetometer
+                        Component="{x:Bind Model.Magnetometer}"/>
                 </PivotItem>
                 <PivotItem
                     Header="Feedback">

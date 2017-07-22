@@ -98,7 +98,7 @@
     </Compile>
     <Compile Include="ViewModels\Amplifier\Ibt2.cs" />
     <Compile Include="ViewModels\I2c\I2cDevice.cs" />
-    <Compile Include="ViewModels\Magnetometer\HMC5883L.cs" />
+    <Compile Include="ViewModels\Magnetometer\Hmc5883l.cs" />
     <Compile Include="ViewModels\Pwm\SoftwarePwm.cs" />
     <Compile Include="Views\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
@@ -108,6 +108,9 @@
     <Compile Include="ViewModels\Pwm\Pwm.cs" />
     <Compile Include="Views\Amplifier.xaml.cs">
       <DependentUpon>Amplifier.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Magnetometer.xaml.cs">
+      <DependentUpon>Magnetometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pwm.xaml.cs">
       <DependentUpon>Pwm.xaml</DependentUpon>
@@ -174,6 +177,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Amplifier.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Magnetometer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

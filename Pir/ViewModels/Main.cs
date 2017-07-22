@@ -1,6 +1,7 @@
 ﻿using Common.Components;
 using Microsoft.IoT.Lightning.Providers;
 using Pir.ViewModels.Amplifier;
+using Pir.ViewModels.Magnetometer;
 using Pir.ViewModels.Pwm;
 using System.Collections.Generic;
 using Windows.Devices;
@@ -24,6 +25,7 @@ namespace Pir.ViewModels
             {
                 yield return Pwm;
                 yield return Amplifier;
+                yield return Magnetometer;
             }
         }
 
@@ -36,5 +38,7 @@ namespace Pir.ViewModels
             ForwardPinNumber = 27,
             BackwardPinNumber = 17
         };
+
+        public Hmc5883l Magnetometer { get; } = new Hmc5883l();
     }
 }
