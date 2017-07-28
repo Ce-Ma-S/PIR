@@ -9,7 +9,47 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
     <StackPanel>
-        <TextBlock
-            Text="{Binding}"/>
+        <controls:PropertyControl
+            Header="B [T]"
+            ToolTipService.ToolTip="Magnetic induction [Tesla]">
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    Command="{x:Bind Model.ReadValueCommand}"
+                    ToolTipService.ToolTip="Read Value"
+                    Margin="5,0"
+                    VerticalAlignment="Top">
+                    <SymbolIcon Symbol="Refresh"/>
+                </Button>
+                <TextBlock Text="{x:Bind Model.Value, Mode=OneWay}"/>
+                <TextBlock VerticalAlignment="Top" Text=" ± "/>
+                <TextBlock VerticalAlignment="Top" Text="{x:Bind Model.Range.Resolution, Mode=OneWay}"/>
+            </StackPanel>
+        </controls:PropertyControl>
+        <controls:PropertyControl
+            Header="Sample Frequency [Hz]">
+            <ComboBox
+                ItemsSource="{x:Bind Model.Frequencies}"
+                SelectedItem="{Binding Frequency, Mode=TwoWay}"/>
+        </controls:PropertyControl>
+        <controls:PropertyControl
+            Header="Averaging Sample Count">
+            <ComboBox
+                ItemsSource="{x:Bind Model.AveragingSampleCounts}"
+                SelectedItem="{Binding AveragingSampleCount, Mode=TwoWay}"/>
+        </controls:PropertyControl>
+        <controls:PropertyControl
+            Header="Bias Mode">
+            <ComboBox
+                SelectedValuePath="Key"
+                DisplayMemberPath="Value"
+                SelectedValue="{Binding BiasMode, Mode=TwoWay}"
+                ItemsSource="{x:Bind Model.BiasModeItems}"/>
+        </controls:PropertyControl>
+        <controls:PropertyControl
+            Header="Range">
+            <ComboBox
+                ItemsSource="{x:Bind Model.Ranges}"
+                SelectedItem="{Binding Range, Mode=TwoWay}"/>
+        </controls:PropertyControl>
     </StackPanel>
 </controls:ComponentControl>

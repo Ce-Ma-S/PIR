@@ -19,6 +19,7 @@ namespace Pir.ViewModels.Amplifier
         protected override async Task DoSwitchOn()
         {
             controller = await GpioController.GetDefaultAsync();
+            ArgumentValidation.NonNull(controller, nameof(GpioController));
             forwardPin = OpenPin(ForwardPinNumber);
             backwardPin = OpenPin(BackwardPinNumber);
             ApplyReversedPolarity();

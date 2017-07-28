@@ -14,6 +14,14 @@ namespace Common.Validation
                 throw new ArgumentNullException(name);
             return value;
         }
+
+        public static T EqualTo<T>(T value, T referenceValue, [CallerMemberName] string name = null)
+            where T : IEquatable<T>
+        {
+            if (!value.Equals(referenceValue))
+                throw new ArgumentOutOfRangeException(name, value, $"Value must be {referenceValue}");
+            return value;
+        }
         public static T GreaterThan<T>(T value, T referenceValue, [CallerMemberName] string name = null)
             where T : IComparable<T>
         {

@@ -16,5 +16,7 @@
         public double Z { get; }
         public double LengthSquared => X * X + Y * Y + Z * Z;
         public double Length => System.Math.Sqrt(LengthSquared);
+
+        public override string ToString() => $"{Length}\nX = {X}\nY = {Y}\nZ = {Z}";
     }
 }

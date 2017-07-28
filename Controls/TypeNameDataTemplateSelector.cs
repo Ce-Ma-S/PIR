@@ -9,15 +9,24 @@ namespace Controls
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             var name = item?.GetType().Name;
-            object resource;
-            return
-                (name == null ?
-                    null :
-                    ((FrameworkElement)container).Resources.TryGetValue(name + "Template", out resource) ?
-                        resource as DataTemplate :
-                        null
-                ) ??
-                base.SelectTemplateCore(item, container);
+            DataTemplate template;
+            if (name == null)
+                template = null;
+            else
+            {
+                var templateName = name + "Template";
+                var element = (FrameworkElement)container;
+                template =
+                    GetTemplate(element.Resources, templateName) ??
+                    GetTemplate(Application.Current.Resources, templateName);
+            }
+            if (template == null)
+                template = base.SelectTemplateCore(item, container);
+            return template;
         }
+
+        private DataTemplate GetTemplate(ResourceDictionary resources, string name) => resources.TryGetValue(name, out var resource) ?
+            resource as DataTemplate :
+            null;
     }
 }

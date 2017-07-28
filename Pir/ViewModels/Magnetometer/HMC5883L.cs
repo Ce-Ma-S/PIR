@@ -1,10 +1,12 @@
-﻿using Common.Math;
+﻿using Common.Commands;
+using Common.Math;
 using Common.Validation;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Windows.Devices.I2c;
+using Windows.UI.Xaml;
 
 namespace Pir.ViewModels.Magnetometer
 {
@@ -13,10 +15,13 @@ namespace Pir.ViewModels.Magnetometer
     {
         public Hmc5883l() :
             base("HMC5883L")
-        { }
+        {
+            ReadValueCommand = new DelegateCommandAsync(ReadValue, () => CanReadValue);
+        }
 
         public override int Address => 0x1E;
         public override I2cBusSpeed BusSpeed => I2cBusSpeed.FastMode;
+        public override I2cSharingMode SharingMode => I2cSharingMode.Shared;
 
         public override string Name => "Magnetometer";
         public override string Description => "Measures magnetic field induction";
@@ -156,14 +161,10 @@ namespace Pir.ViewModels.Magnetometer
         {
             ApplyConfigurationA();
             // single mode
-            if (Frequency == 0)
+            if (IsSingleMode)
             {
                 DisposeTimer();
-                const byte singleMode = 0x01;
-                WriteRegister(RegisterOfMode, singleMode);
-                // Wait 6 ms (or monitor status register or DRDY hardware interrupt pin - not used)
-                await Task.Delay(6);
-                ReadValue();
+                await ReadValue();
             }
             // continuous mode
             else
@@ -173,14 +174,17 @@ namespace Pir.ViewModels.Magnetometer
                 // wait 2 periods, then take readings at given frequency
                 var period = TimeSpan.FromSeconds(1 / Frequency);
                 var doublePeriod = TimeSpan.FromTicks(period.Ticks * 2);
-                timer = new Timer(
-                    i => ReadValue(), null,
-                    dueTime: doublePeriod,
-                    period: period
-                    );
-                AddDisposables(timer);
+                timer = new DispatcherTimer()
+                {
+                    Interval = period
+                };
+                timer.Tick += (s, a) => ReadReadyValue();
+                await Task.Delay(doublePeriod);
+                timer.Start();
             }
         }
+
+        private bool IsSingleMode => Frequency == 0;
 
         private static readonly Dictionary<double, byte?> frequencyToConfigA = new Dictionary<double, byte?>
         {
@@ -196,13 +200,12 @@ namespace Pir.ViewModels.Magnetometer
 
         private void DisposeTimer()
         {
-            if (timer != null)
-                RemoveDisposables(timer);
+            timer?.Stop();
             timer = null;
         }
 
         private double frequency = 15;
-        private Timer timer;
+        private DispatcherTimer timer;
 
         #endregion
 
@@ -257,6 +260,8 @@ namespace Pir.ViewModels.Magnetometer
             public double Resolution { get; } /*[T]/LSb*/
             internal double Gain { get; } /*LSb/[T]*/
             internal byte ConfigB { get; }
+
+            public override string ToString() => $"<{Minimum}, {Maximum}> ± {Resolution}";
         }
 
         /// <summary>
@@ -298,34 +303,50 @@ namespace Pir.ViewModels.Magnetometer
             set => SetPropertyValue(ref this.value, value);
         }
 
-        public void ReadValue()
+        public bool CanReadValue => IsSingleMode;
+        public async Task ReadValue()
         {
-            var values = new byte[6];
-            // If gain is changed then this data set is using previous gain.
-            ReadRegisters(0x06 /*read all 6 bytes*/, values);
-            // point to first data X
-            MoveToRegister(RegisterOfDataOutputXMsb);
-            // Check the endianness of the system and flip the bytes if necessary
-            if (!BitConverter.IsLittleEndian)
+            Commands.ValidateCanExecute(CanReadValue);
+            const byte singleMode = 0x01;
+            WriteRegister(RegisterOfMode, singleMode);
+            // Wait 6 ms (or monitor status register or DRDY hardware interrupt pin - not used)
+            await Task.Delay(6);
+            ReadReadyValue();
+        }
+        public ICommand ReadValueCommand { get; }
+
+        private void ReadReadyValue()
+        {
+            lock (valueLock)
             {
-                Array.Reverse(values, 0, 2);
-                Array.Reverse(values, 2, 2);
-                Array.Reverse(values, 4, 2);
+                var values = new byte[6];
+                // If gain is changed then this data set is using previous gain.
+                ReadRegisters(0x06 /*read all 6 bytes*/, values);
+                // point to first data X
+                MoveToRegister(RegisterOfDataOutputXMsb);
+                // Check the endianness of the system and flip the bytes if necessary
+                if (!BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(values, 0, 2);
+                    Array.Reverse(values, 2, 2);
+                    Array.Reverse(values, 4, 2);
+                }
+                // Convert three 16-bit 2’s compliment hex values to decimal values and assign to X, Z, Y, respectively.
+                int x = BitConverter.ToInt16(values, 0);
+                int z = BitConverter.ToInt16(values, 2);
+                int y = BitConverter.ToInt16(values, 4);
+                Value = new Vector3d(
+                    x / Range.Gain,
+                    y / Range.Gain,
+                    z / Range.Gain
+                    );
             }
-            // Convert three 16-bit 2’s compliment hex values to decimal values and assign to X, Z, Y, respectively.
-            int x = BitConverter.ToInt16(values, 0);
-            int z = BitConverter.ToInt16(values, 2);
-            int y = BitConverter.ToInt16(values, 4);
-            Value = new Vector3d(
-                x / Range.Gain,
-                y / Range.Gain,
-                z / Range.Gain
-                );
         }
 
-        public override string ToString() => $"B = {Value.Length} +- {Range.Resolution} T\nBX = {Value.X} T\nBY = {Value.Y} T\nBZ = {Value.Z} T";
+        public override string ToString() => $"B = {Value}\n± {Range.Resolution} T";
 
         private Vector3d value;
+        private object valueLock = new object();
 
         #endregion
 

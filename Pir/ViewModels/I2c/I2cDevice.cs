@@ -1,4 +1,5 @@
 ﻿using Common.Components;
+using Common.Validation;
 using System;
 using System.Threading.Tasks;
 using Windows.Devices.I2c;
@@ -21,6 +22,7 @@ namespace Pir.ViewModels.I2c
         protected override async Task DoSwitchOn()
         {
             controller = await I2cController.GetDefaultAsync();
+            ArgumentValidation.NonNull(controller, nameof(I2cController));
             var connectionSettings = new I2cConnectionSettings(Address)
             {
                 BusSpeed = BusSpeed,
